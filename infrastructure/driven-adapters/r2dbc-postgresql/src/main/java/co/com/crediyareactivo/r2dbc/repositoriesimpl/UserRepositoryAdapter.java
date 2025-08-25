@@ -1,6 +1,5 @@
 package co.com.crediyareactivo.r2dbc.repositoriesimpl;
-import co.com.crediyareactivo.model.user.models.User;
-
+import co.com.crediyareactivo.model.user.models.UserDomain;
 import co.com.crediyareactivo.r2dbc.entities.UserEntity;
 import co.com.crediyareactivo.r2dbc.helper.TransactionalUtils;
 import co.com.crediyareactivo.r2dbc.repositories.UserRepository;
@@ -13,14 +12,14 @@ import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
-public class UserRepositoryAdapter implements co.com.crediyareactivo.model.user.gateways.UserRepository {
+public class UserRepositoryAdapter implements co.com.crediyareactivo.model.user.gateways.UserRepositoryGateway {
 
     private final UserRepository repo;
     private final ObjectMapper mapper;
     private final TransactionalUtils tx;
 
     @Override
-    public Mono<User> save(User user) {
+    public Mono<UserDomain> save(UserDomain user) {
         return tx.execute(
                 Mono.fromSupplier(() -> {
                             var entity = mapper.map(user, UserEntity.class);
@@ -28,28 +27,28 @@ public class UserRepositoryAdapter implements co.com.crediyareactivo.model.user.
                             return entity;
                         })
                         .flatMap(repo::save)
-                        .map(saved -> mapper.map(saved, User.class))
+                        .map(saved -> mapper.map(saved, UserDomain.class))
         );
     }
 
 
 
     @Override
-    public Mono<User> findById(String id) {
+    public Mono<UserDomain> findById(String id) {
         return repo.findById(id)
-                .map(entity -> mapper.map(entity, User.class));
+                .map(entity -> mapper.map(entity, UserDomain.class));
     }
 
     @Override
-    public Mono<User> findByEmail(String email) {
+    public Mono<UserDomain> findByEmail(String email) {
         return repo.findByEmail(email)
-                .map(entity -> mapper.map(entity, User.class));
+                .map(entity -> mapper.map(entity, UserDomain.class));
     }
 
     @Override
-    public Flux<User> findAll() {
+    public Flux<UserDomain> findAll() {
         return repo.findAll()
-                .map(entity -> mapper.map(entity, User.class));
+                .map(entity -> mapper.map(entity, UserDomain.class));
     }
 
     @Override
@@ -58,9 +57,9 @@ public class UserRepositoryAdapter implements co.com.crediyareactivo.model.user.
     }
 
     @Override
-    public Mono<User> findByRolId(Long rolId) {
+    public Mono<UserDomain> findByRolId(Long rolId) {
         return repo.findByRolId(rolId)
-                .map(entity -> mapper.map(entity, User.class));
+                .map(entity -> mapper.map(entity, UserDomain.class));
     }
 
 }
