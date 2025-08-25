@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: crediyareactivo
+  main:
+    web-application-type: reactive
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/crediya
+    username: mfacevedo
+    password: password
+
+  sql:
+    init:
+      mode: always  # en dev, para ejecutar schema.sql/data.sql si los pones
+logging:
+  level:
+    org.hibernate.SQL: "debug"
+    org.hibernate.type.descriptor.sql.BasicBinder: "trace"
+    root: INFO
+    co.com.credya: INFO
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+cors:
+  allowed-origins: "http://localhost:4200,http://localhost:8080"
+
