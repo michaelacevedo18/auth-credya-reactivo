@@ -1,7 +1,5 @@
 package co.com.crediyareactivo.r2dbc.repositoriesimpl;
-
-import co.com.crediyareactivo.model.user.gateways.UserRepositoryGateway;
-import co.com.crediyareactivo.model.user.models.UserDomain;
+import co.com.crediyareactivo.model.user.models.User;
 
 import co.com.crediyareactivo.r2dbc.entities.UserEntity;
 import co.com.crediyareactivo.r2dbc.helper.TransactionalUtils;
@@ -15,14 +13,14 @@ import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
-public class UserRepositoryAdapter implements UserRepositoryGateway {
+public class UserRepositoryAdapter implements co.com.crediyareactivo.model.user.gateways.UserRepository {
 
     private final UserRepository repo;
     private final ObjectMapper mapper;
     private final TransactionalUtils tx;
 
     @Override
-    public Mono<UserDomain> save(UserDomain user) {
+    public Mono<User> save(User user) {
         return tx.execute(
                 Mono.fromSupplier(() -> {
                             var entity = mapper.map(user, UserEntity.class);
@@ -30,28 +28,28 @@ public class UserRepositoryAdapter implements UserRepositoryGateway {
                             return entity;
                         })
                         .flatMap(repo::save)
-                        .map(saved -> mapper.map(saved, UserDomain.class))
+                        .map(saved -> mapper.map(saved, User.class))
         );
     }
 
 
 
     @Override
-    public Mono<UserDomain> findById(String id) {
+    public Mono<User> findById(String id) {
         return repo.findById(id)
-                .map(entity -> mapper.map(entity, UserDomain.class));
+                .map(entity -> mapper.map(entity, User.class));
     }
 
     @Override
-    public Mono<UserDomain> findByEmail(String email) {
+    public Mono<User> findByEmail(String email) {
         return repo.findByEmail(email)
-                .map(entity -> mapper.map(entity, UserDomain.class));
+                .map(entity -> mapper.map(entity, User.class));
     }
 
     @Override
-    public Flux<UserDomain> findAll() {
+    public Flux<User> findAll() {
         return repo.findAll()
-                .map(entity -> mapper.map(entity, UserDomain.class));
+                .map(entity -> mapper.map(entity, User.class));
     }
 
     @Override
@@ -60,9 +58,9 @@ public class UserRepositoryAdapter implements UserRepositoryGateway {
     }
 
     @Override
-    public Mono<UserDomain> findByRolId(Long rolId) {
+    public Mono<User> findByRolId(Long rolId) {
         return repo.findByRolId(rolId)
-                .map(entity -> mapper.map(entity, UserDomain.class));
+                .map(entity -> mapper.map(entity, User.class));
     }
 
 }
