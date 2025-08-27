@@ -1,11 +1,8 @@
 package co.com.crediyareactivo.model.user.models;
 import lombok.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder(toBuilder = true)
+@Data
+@Builder
 public class UserResponseDomain {
     private String token;
     private String email;

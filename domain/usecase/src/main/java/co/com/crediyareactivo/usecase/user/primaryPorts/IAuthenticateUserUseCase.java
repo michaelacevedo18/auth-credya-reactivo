@@ -4,5 +4,5 @@ import co.com.crediyareactivo.model.user.models.UserResponseDomain;
 import reactor.core.publisher.Mono;
 
 public interface IAuthenticateUserUseCase {
-     //Mono<UserResponseDomain> authenticateEmailPwd(String email, String pwd);
+     Mono<UserResponseDomain> authenticateEmailPwd(String email, String pwd);
 }

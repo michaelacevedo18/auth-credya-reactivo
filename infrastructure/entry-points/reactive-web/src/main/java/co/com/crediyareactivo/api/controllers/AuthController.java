@@ -1,33 +1,22 @@
 package co.com.crediyareactivo.api.controllers;
 
-import co.com.crediyareactivo.api.dtos.CreateUserDTO;
 import co.com.crediyareactivo.api.dtos.LoginRequestDTO;
 import co.com.crediyareactivo.api.dtos.ResponseDTO;
-import co.com.crediyareactivo.api.helpers.JwtService;
-import co.com.crediyareactivo.api.helpers.PasswordHashService;
-import co.com.crediyareactivo.api.mapper.UserMapper;
-import co.com.crediyareactivo.model.user.gateways.UserRepositoryGateway;
-import co.com.crediyareactivo.model.user.models.UserDomain;
+import co.com.crediyareactivo.model.user.models.UserResponseDomain;
 import co.com.crediyareactivo.usecase.user.AuthenticateUserUseCase;
-import co.com.crediyareactivo.usecase.user.UserUseCase;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Creado exitosamente",
@@ -40,19 +29,28 @@ import java.util.Map;
 @AllArgsConstructor
 public class AuthController {
 
-    private final UserRepositoryGateway userRepository;
-    private final PasswordEncoder encoder;
-    private final JwtService jwtService;
+    private final AuthenticateUserUseCase authRepository;
 
     @PostMapping("/login")
-    public Mono<ResponseEntity<Map<String, String>>> login(@RequestBody LoginRequestDTO login) {
-        return userRepository.findByEmail(login.email())
-                .filter(user -> encoder.matches(login.password(), user.getPassword()))
-                .map(user -> {
-                    String token = jwtService.generateToken(user.getEmail(), user.getRolId());
-                    return ResponseEntity.ok(Map.of("token", token));
-                })
-                .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()));
+    public Mono<ResponseEntity<ResponseDTO<UserResponseDomain>>> login(@Valid @RequestBody Mono<LoginRequestDTO> loginDTOMono) {
+        return loginDTOMono
+                .flatMap(dto -> authRepository.authenticateEmailPwd(dto.email(), dto.password()))
+                .map(user -> ResponseEntity.ok(
+                        ResponseDTO.<UserResponseDomain>builder()
+                                .success(true)
+                                .message("Inicio de sesion exitoso")
+                                .data(user)
+                                .statusCode(200)
+                                .timestamp(LocalDateTime.now())
+                                .build()
+                ));
     }
+
+    @GetMapping("/customer")
+    public Mono<ResponseEntity<String>> customerEndpoint() {
+        return Mono.just(ResponseEntity.ok("Acceso autorizado solo para rol 2"));
+    }
+
+
 
 }

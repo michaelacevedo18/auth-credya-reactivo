@@ -1,7 +1,6 @@
 package co.com.crediyareactivo.api.controllers;
 import co.com.crediyareactivo.api.dtos.CreateUserDTO;
 import co.com.crediyareactivo.api.dtos.ResponseDTO;
-import co.com.crediyareactivo.api.helpers.PasswordHashService;
 import co.com.crediyareactivo.api.mapper.UserMapper;
 import co.com.crediyareactivo.model.user.models.UserDomain;
 import co.com.crediyareactivo.usecase.user.UserUseCase;
@@ -14,11 +13,11 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Creado exitosamente",
@@ -32,14 +31,11 @@ import java.util.Map;
 public class UserController {
 
     private final UserUseCase useCase;
-    private final PasswordHashService passwordHashService;
-
     @PostMapping
     public Mono<ResponseEntity<ResponseDTO<UserDomain>>> create(@Valid @RequestBody Mono<CreateUserDTO> dtoMono) {
         return dtoMono
                 .map(UserMapper::toDomain)
                 .map(user -> {
-                    user.setPassword(passwordHashService.encode(user.getPassword()));
                     return user;
                 })
                 .flatMap(useCase::apply)

@@ -1,6 +1,5 @@
 package co.com.crediyareactivo.api.config;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -10,28 +9,39 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableWebFluxSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
+    private final JWTSecurityContextRepository securityContextRepository;
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+    public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
         return http
-                .csrf(csrf -> csrf.disable()) // aún necesario aunque esté deprecado
-                .authorizeExchange(exchanges -> exchanges
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                .securityContextRepository(securityContextRepository)
+                .authorizeExchange(exchange -> exchange
+
                         .pathMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/api/v1/auth/**" // login y registro sin autenticación
+                                "/swagger-resources/**",
+                                "/webjars/**",
+                                "/favicon.ico"
                         ).permitAll()
-                        .pathMatchers(HttpMethod.POST, "/api/v1/users").hasAnyAuthority("1", "2") // admin o asesor
-                        .pathMatchers(HttpMethod.POST, "/api/v1/loan").hasAuthority("3") // cliente
+                        .pathMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
+                        .pathMatchers("/api/v1/auth/login").permitAll()
+                        .pathMatchers(HttpMethod.GET, "/api/v1/auth/customer").hasRole("2")
+
                         .anyExchange().authenticated()
                 )
                 .build();
     }
+
+
 
 
 
