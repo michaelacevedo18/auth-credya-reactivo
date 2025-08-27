@@ -16,6 +16,7 @@ public class UserMapper {
                 .email(dto.email())
                 .baseSalary(dto.baseSalary())
                 .rolId(dto.rolId())
+                .password(dto.password())
                 .build();
     }
 
@@ -30,6 +31,7 @@ public class UserMapper {
                 .address(user.getAddress())
                 .phoneNumber(user.getPhoneNumber())
                 .email(user.getEmail())
+                .password(user.getPassword())
                 .baseSalary(user.getBaseSalary())
                 .rolId(user.getRolId())
                 .build();

@@ -1,5 +1,8 @@
 server:
   port: 8080
+app:
+  jwt:
+    secret: supersecreto1A44rdsfRfdgdfgSDGsdgDSGSDFGDSfgDSFgDSFgDSFgsdFge44323456
 
 spring:
   application:
@@ -14,7 +17,11 @@ spring:
 
   sql:
     init:
-      mode: always  # en dev, para ejecutar schema.sql/data.sql si los pones
+      mode: always
+  security:
+    user:
+      name: none
+      password: none
 logging:
   level:
     org.hibernate.SQL: "debug"
@@ -30,6 +37,7 @@ management:
     health:
       probes:
         enabled: true
+
 
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"

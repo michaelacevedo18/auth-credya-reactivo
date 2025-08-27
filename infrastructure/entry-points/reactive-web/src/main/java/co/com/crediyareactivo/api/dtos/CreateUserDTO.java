@@ -27,6 +27,9 @@ public record CreateUserDTO(
         @NotBlank(message = "El correo es obligatorio")
         String email,
 
+        @NotBlank(message = "El password es obligatorio")
+        String password,
+
         @NotNull(message = "El salario base es obligatorio")
         @DecimalMin(value = "0.0", inclusive = false, message = "El salario debe ser mayor que 0")
         @DecimalMax(value = "15000000.0", message = "El salario no debe superar 15 millones")
