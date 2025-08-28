@@ -1,19 +1,24 @@
 package co.com.crediyareactivo.model.user.models;
 
-import java.util.Arrays;
-
 public enum RolEnum {
-    ADMIN(1), CUSTOMER(2);
+     ADMIN(1L, "ADMIN"),
+    ASESOR(2L, "ASESOR"),
+    CLIENTE(3L, "CUSTOMER");
 
-    private final int id;
+    private final Long id;
+    private final String name;
 
-    RolEnum(int id) { this.id = id; }
+    RolEnum(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
-    public static String fromId(int id) {
-        return Arrays.stream(values())
-                .filter(r -> r.id == id)
-                .findFirst()
-                .map(Enum::name)
-                .orElse("UNKNOWN");
+    public static String getNameById(Long id) {
+        for (RolEnum rol : values()) {
+            if (rol.id.equals(id)) {
+                return rol.name;
+            }
+        }
+        throw new IllegalArgumentException("Rol desconocido: " + id);
     }
 }

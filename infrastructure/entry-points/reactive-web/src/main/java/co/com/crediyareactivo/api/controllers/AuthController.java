@@ -1,5 +1,14 @@
 package co.com.crediyareactivo.api.controllers;
 
+import java.time.LocalDateTime;
+
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import co.com.crediyareactivo.api.dtos.LoginRequestDTO;
 import co.com.crediyareactivo.api.dtos.ResponseDTO;
 import co.com.crediyareactivo.model.user.models.UserResponseDomain;
@@ -10,13 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDateTime;
 
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Creado exitosamente",
@@ -45,12 +48,4 @@ public class AuthController {
                                 .build()
                 ));
     }
-
-    @GetMapping("/customer")
-    public Mono<ResponseEntity<String>> customerEndpoint() {
-        return Mono.just(ResponseEntity.ok("Acceso autorizado solo para rol 2"));
-    }
-
-
-
 }

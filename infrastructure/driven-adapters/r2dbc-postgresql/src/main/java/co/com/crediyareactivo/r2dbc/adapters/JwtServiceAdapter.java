@@ -1,13 +1,15 @@
 package co.com.crediyareactivo.r2dbc.adapters;
 
-import co.com.crediyareactivo.model.user.gateways.ports.JWTServicePort;
-import co.com.crediyareactivo.model.user.models.UserResponseDomain;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
-
 import java.security.Key;
 import java.util.Date;
+
+import org.springframework.stereotype.Component;
+
+import co.com.crediyareactivo.model.user.gateways.ports.JWTServicePort;
+import co.com.crediyareactivo.model.user.models.UserResponseDomain;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtServiceAdapter implements JWTServicePort {
 
@@ -17,10 +19,11 @@ public class JwtServiceAdapter implements JWTServicePort {
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
     @Override
-    public String generateToken(String email, Long rolId) {
+    public String generateToken(String email, String rolName, String idNumber) {
         return Jwts.builder()
                 .setSubject(email)
-                .claim("rol", rolId)
+                .claim("rol", rolName)
+                .claim("idNumber", idNumber)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(key)

@@ -32,10 +32,9 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/favicon.ico"
                         ).permitAll()
-                        .pathMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
+                        //.pathMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
                         .pathMatchers("/api/v1/auth/login").permitAll()
-                        .pathMatchers(HttpMethod.GET, "/api/v1/auth/customer").hasRole("2")
-
+                        .pathMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("ADMIN", "ASESOR")
                         .anyExchange().authenticated()
                 )
                 .build();
